@@ -5,7 +5,7 @@
 DHT dht;
 
 void dhtLoop();
-void highLowLed();
+void Led();
 
 void setup()
 {
@@ -16,23 +16,38 @@ void setup()
 
 void loop()
 {
+  Led();
   dhtLoop();
 }
 
 void dhtLoop()
 {
-  highLowLed();
+  delay(2000);
   float humidity = dht.getHumidity();
   float temperature = dht.getTemperature();
-  Serial.println(humidity, 1);
-  Serial.println(temperature, 1);
-  Serial.println(dht.toFahrenheit(temperature), 1);
+  if (!isnan(humidity) && !isnan(temperature))
+  {
+    Serial.print(humidity, 1);
+    Serial.print(",");
+    Serial.print(temperature, 1);
+    Serial.print(",");
+    Serial.print(dht.toFahrenheit(temperature), 1);
+    Serial.println();
+  }
 }
 
-void highLowLed()
+void Led()
 {
-  digitalWrite(pin, HIGH);
-  delay(1000);
-  digitalWrite(pin, LOW);
-  delay(1000);
+  if (Serial.available())
+  {
+    switch (Serial.read())
+    {
+    case 'a':
+      digitalWrite(pin, HIGH);
+      break;
+    case 'b':
+      digitalWrite(pin, LOW);
+      break;
+    }
+  }
 }
